@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.appdynamics.extensions</groupId>
 	<artifactId>aws-route53-monitoring-extension</artifactId>
-	<version>1.0.2</version>
+	<version>2.0.0</version>
 	<name>AWS Route53 Monitoring Extension</name>
 	
 	<properties>
@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>com.appdynamics.extensions</groupId>
 			<artifactId>aws-cloudwatch-exts-commons</artifactId>
-			<version>1.0.6</version>
+			<version>2.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -103,6 +103,7 @@
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<manifestEntries>
 										<Implementation-Title>AWS Route53 Monitor v${project.version} Build Date ${maven.build.timestamp}</Implementation-Title>
+										<Main-Class>com.appdynamics.extensions.workbench.WorkbenchServerLauncher</Main-Class>
 									</manifestEntries>
 								</transformer>
 							</transformers>
