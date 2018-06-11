@@ -24,7 +24,7 @@ public class Route53MonitorITest {
 	@Test
 	public void testMetricsCollectionCredentialsEncrypted() throws Exception {
 		Map<String, String> args = Maps.newHashMap();
-		args.put("config-file","src/test/resources/conf/itest-encrypted-config.yaml");
+		args.put("config-file","/Users/bhuvnesh.kumar/repos/appdynamics/extensions/aws-route53-monitoring-extension/src/test/resources/conf/itest-proxy-config.yaml");
 		
 		TaskOutput result = classUnderTest.execute(args, null);
 		assertTrue(result.getStatusMessage().contains("successfully completed"));

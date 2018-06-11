@@ -1,35 +1,127 @@
+
+#This will create this metric in all the tiers, under this path. Please make sure to have a trailing |
+#metricPrefix: "Custom Metrics|Amazon Route53|"
+
+#This will create it in specific Tier aka Component. Replace <COMPONENT_ID>. Please make sure to have a trailing |.
+#To find out the COMPONENT_ID, please see the screen shot here https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java
+metricPrefix: "Server|Component:<TIER_ID>|Custom Metrics|Amazon Route53|"
+
 accounts:
   - awsAccessKey: ""
     awsSecretKey: ""
-    displayAccountName: ""
-    regions: ["us-east-1", "us-west-1", "us-west-2"]
+    displayAccountName: "AppD"
+
+    # Regions where cloudwatch is registered
+    # Allowed values: ap-southeast-1, ap-southeast-2, ap-northeast-1, eu-central-1,
+    #                 us-east-1, eu-west-1, us-west-1, us-west-2, sa-east-1
+    #
+    regions: ["us-west-2"]
 
 credentialsDecryptionConfig:
-    enableDecryption: "true"
-    decryptionKey: "test"
-    
+    enableDecryption: "false"
+    encryptionKey:
+
 proxyConfig:
     host:
     port:
     username:
     password:
-    
-metricsConfig:
-    metricTypes:
-      - metricName: ""
-        statType: ""
 
-    excludeMetrics: [ ]
-
-    metricsTimeRange:
-      startTimeInMinsBeforeNow: 5
-      endTimeInMinsBeforeNow: 0
-
-    maxErrorRetrySize: 0
+##Filters metrics based on Health Check IDs provided. Accepts regex patterns
+includeHealthCheckID: ["blog-*", "saas"]
 
 concurrencyConfig:
   noOfAccountThreads: 3
   noOfRegionThreadsPerAccount: 3
   noOfMetricThreadsPerRegion: 3
+  #Thread timeout in seconds
+  threadTimeOut: 30
 
-metricPrefix: "Custom Metrics|Amazon Route53|"
+#Allowed values are Basic and Detailed. Refer https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html for more information
+# Basic will fire CloudWatch API calls every 5 minutes
+# Detailed will fire CloudWatch API calls every 1 minutes
+cloudWatchMonitoring: "Basic"
+
+regionEndPoints:
+  ap-southeast-1: monitoring.ap-southeast-1.amazonaws.com
+  ap-southeast-2: monitoring.ap-southeast-2.amazonaws.com
+  ap-northeast-1: monitoring.ap-northeast-1.amazonaws.com
+  eu-central-1: monitoring.eu-central-1.amazonaws.com
+  eu-west-1: monitoring.eu-west-1.amazonaws.com
+  us-east-1: monitoring.us-east-1.amazonaws.com
+  us-west-1: monitoring.us-west-1.amazonaws.com
+  us-west-2: monitoring.us-west-2.amazonaws.com
+  sa-east-1: monitoring.sa-east-1.amazonaws.com
+
+# Global metrics config for all accounts
+metricsConfig:
+
+    # By default, all metrics retrieved from cloudwatch are 'Average' values.
+    # This option allows you to override the metric type.
+    #
+    # Allowed statTypes are: ave, max, min, sum, samplecount
+    #
+    # Note: Irrespective of the metric type, value will still be reported as
+    # Observed value to the Controller
+    includeMetrics:
+       - name: "ChildHealthCheckHealthyCount"
+         alias: "Child Health Check Healthy Count"
+         statType: "ave"
+         aggregationType: "OBSERVATION"
+         timeRollUpType: "CURRENT"
+         clusterRollUpType: "COLLECTIVE"
+         delta: false
+         multiplier: 1
+       - name: "ConnectionTime"
+         alias: "Connection Time"
+         statType: "ave"
+         aggregationType: "OBSERVATION"
+         timeRollUpType: "CURRENT"
+         clusterRollUpType: "COLLECTIVE"
+         delta: false
+         multiplier: 1
+       - name: "HealthCheckPercentageHealthy"
+         alias: "Health Check Percentage Healthy"
+         statType: "ave"
+         aggregationType: "OBSERVATION"
+         timeRollUpType: "CURRENT"
+         clusterRollUpType: "COLLECTIVE"
+         delta: false
+         multiplier: 1
+       - name: "HealthCheckStatus"
+         alias: "Health Check Status"
+         statType: "ave"
+         aggregationType: "OBSERVATION"
+         timeRollUpType: "CURRENT"
+         clusterRollUpType: "COLLECTIVE"
+         delta: false
+         multiplier: 1
+       - name: "SSLHandshakeTime"
+         alias: "SSL Handshake Time"
+         statType: "ave"
+         aggregationType: "OBSERVATION"
+         timeRollUpType: "CURRENT"
+         clusterRollUpType: "COLLECTIVE"
+         delta: false
+         multiplier: 1
+       - name: "TimeToFirstByte"
+         alias: "Time To First Byte"
+         statType: "ave"
+         aggregationType: "OBSERVATION"
+         timeRollUpType: "CURRENT"
+         clusterRollUpType: "COLLECTIVE"
+         delta: false
+         multiplier: 1
+
+    metricsTimeRange:
+      startTimeInMinsBeforeNow: 5
+      endTimeInMinsBeforeNow: 0
+
+    # Rate limit ( per second ) for GetMetricStatistics, default value is 400. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html
+    getMetricStatisticsRateLimit: 400
+
+    #
+    # The max number of retry attempts for failed retryable requests
+    # (ex: 5xx error responses from a service) or throttling errors
+    #
+    maxErrorRetrySize: 0

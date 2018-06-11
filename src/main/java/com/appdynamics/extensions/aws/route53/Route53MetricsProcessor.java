@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
+import static com.appdynamics.extensions.aws.metric.processors.MetricsProcessorHelper.*;
+
 /**
  * @author Satish Muddam
  */
@@ -53,7 +55,7 @@ public class Route53MetricsProcessor implements MetricsProcessor {
 
         HealthCheckIDPredicate predicate = new HealthCheckIDPredicate(includeHealthCheckID);
 
-        return MetricsProcessorHelper.getFilteredMetrics(awsCloudWatch, awsRequestsCounter, NAMESPACE, includeMetrics, dimensions, (Predicate<Metric>) predicate);
+        return getFilteredMetrics(awsCloudWatch, awsRequestsCounter, NAMESPACE, includeMetrics, dimensions, predicate);
 
 //        return MetricsProcessorHelper.getFilteredMetrics(awsCloudWatch, awsRequestsCounter,
 //                NAMESPACE,

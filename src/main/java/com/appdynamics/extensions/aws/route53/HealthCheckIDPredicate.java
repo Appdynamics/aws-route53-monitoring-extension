@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by bhuvnesh.kumar on 6/8/18.
  */
-public class HealthCheckIDPredicate {
+public class HealthCheckIDPredicate implements Predicate<Metric> {
 
     private List<String> includeHealthCheckID;
     private Predicate<CharSequence> patternPredicate;
