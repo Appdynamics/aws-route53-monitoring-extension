@@ -56,11 +56,6 @@ public class Route53MetricsProcessor implements MetricsProcessor {
         HealthCheckIDPredicate predicate = new HealthCheckIDPredicate(includeHealthCheckID);
 
         return getFilteredMetrics(awsCloudWatch, awsRequestsCounter, NAMESPACE, includeMetrics, dimensions, predicate);
-
-//        return MetricsProcessorHelper.getFilteredMetrics(awsCloudWatch, awsRequestsCounter,
-//                NAMESPACE,
-//                includeMetrics,
-//                dimensions);
     }
 
     public StatisticType getStatisticType(AWSMetric metric) {
