@@ -25,7 +25,7 @@ proxyConfig:
     host:
     port:
     username:
-    accountAccessKey:
+    password:
 
 ##Filters metrics based on Health Check IDs provided. Accepts regex patterns
 includeHealthCheckID: ["blog-*", "saas"]

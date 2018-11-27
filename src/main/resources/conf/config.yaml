@@ -27,7 +27,7 @@ proxyConfig:
     host:
     port:
     username:
-    accountAccessKey:
+    password:
 
 # Classic (namespace : "AWS/Route53")
 # Dimensions : HealthCheckId

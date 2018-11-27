@@ -24,7 +24,7 @@ proxyConfig:
     host: 54.72.204.154
     port: 8081
     username:
-    accountAccessKey:
+    password:
 
 ##Filters metrics based on Health Check IDs provided. Accepts regex patterns
 includeHealthCheckID: ["blog-*", "saas"]
