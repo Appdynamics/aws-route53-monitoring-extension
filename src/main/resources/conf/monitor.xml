@@ -19,16 +19,16 @@
         <description>AWS Route53 Monitor Run task</description>
         <type>java</type>
         <execution-timeout-in-secs>60</execution-timeout-in-secs>
-        
-		<task-arguments>
-			<argument name="config-file" is-required="true" default-value="monitors/AWSRoute53Monitor/conf/config.yaml" />
-			<argument name="region-endpoints-config" is-required="true" default-value="monitors/AWSRoute53Monitor/conf/region-endpoints.yaml" />
-		</task-arguments>
-            
+
+        <task-arguments>
+            <argument name="config-file" is-required="true"
+                      default-value="monitors/AWSRoute53Monitor/conf/config.yaml"/>
+        </task-arguments>
+
         <java-task>
             <classpath>aws-route53-monitoring-extension.jar</classpath>
             <impl-class>com.appdynamics.extensions.aws.route53.Route53Monitor</impl-class>
         </java-task>
-        
+
     </monitor-run-task>
 </monitor>

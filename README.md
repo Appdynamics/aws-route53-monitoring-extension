@@ -32,7 +32,7 @@ Captures Route53 statistics from Amazon CloudWatch and displays them in the AppD
 | | host | The proxy host (must also specify port) |  |
 | | port | The proxy port (must also specify host) |  |
 | | username | The proxy username (optional)  |  |
-| | password | The proxy password (optional)  |  |
+| | accountAccessKey | The proxy accountAccessKey (optional)  |  |
 | **metricsConfig** | ----- | ----- | ----- |
 | metricTypes | | Fields under this section can be repeated for multiple metric types override |  |
 | | metricName | The metric name | "CPUUtilization" |
@@ -74,7 +74,7 @@ proxyConfig:
     host:
     port:
     username:
-    password:    
+    accountAccessKey:    
 
 metricsConfig:
     metricTypes:

@@ -11,12 +11,14 @@ package com.appdynamics.extensions.aws.route53;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.model.DimensionFilter;
 import com.amazonaws.services.cloudwatch.model.Metric;
+import com.appdynamics.extensions.aws.config.Dimension;
 import com.appdynamics.extensions.aws.config.IncludeMetric;
 import com.appdynamics.extensions.aws.dto.AWSMetric;
 import com.appdynamics.extensions.aws.metric.NamespaceMetricStatistics;
 import com.appdynamics.extensions.aws.metric.StatisticType;
 import com.appdynamics.extensions.aws.metric.processors.MetricsProcessor;
 import com.appdynamics.extensions.aws.metric.processors.MetricsProcessorHelper;
+import com.appdynamics.extensions.aws.predicate.MultiDimensionPredicate;
 import com.google.common.base.Predicate;
 
 import java.util.ArrayList;
@@ -26,51 +28,38 @@ import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 
 import static com.appdynamics.extensions.aws.metric.processors.MetricsProcessorHelper.*;
+import static com.appdynamics.extensions.aws.route53.Constants.*;
 
-/**
- * @author Satish Muddam
- */
+
 public class Route53MetricsProcessor implements MetricsProcessor {
 
-    private static final String NAMESPACE = "AWS/Route53";
-
-    private static final String DIMENSIONS = "HealthCheckId";
-
+    private static final String NAMESPACE = AWS_NAMESPACE;
     private List<IncludeMetric> includeMetrics;
-    private List<String> includeHealthCheckID;
+    private List<Dimension> dimensions;
 
-    public Route53MetricsProcessor(List<IncludeMetric> includeMetrics, List<String> includeHealthCheckID) {
+    public Route53MetricsProcessor(List<IncludeMetric> includeMetrics, List<Dimension> dimensions) {
         this.includeMetrics = includeMetrics;
-        this.includeHealthCheckID = includeHealthCheckID;
+        this.dimensions = dimensions;
     }
 
     public List<AWSMetric> getMetrics(AmazonCloudWatch awsCloudWatch, String accountName, LongAdder awsRequestsCounter) {
-
-        List<DimensionFilter> dimensions = new ArrayList<DimensionFilter>();
-
-        DimensionFilter dimensionFilter = new DimensionFilter();
-        dimensionFilter.withName(DIMENSIONS);
-
-        dimensions.add(dimensionFilter);
-
-        HealthCheckIDPredicate predicate = new HealthCheckIDPredicate(includeHealthCheckID);
-
-        return getFilteredMetrics(awsCloudWatch, awsRequestsCounter, NAMESPACE, includeMetrics, dimensions, predicate);
+        MultiDimensionPredicate predicate = new MultiDimensionPredicate(dimensions);
+        return MetricsProcessorHelper.getFilteredMetrics(awsCloudWatch, awsRequestsCounter,
+                NAMESPACE, includeMetrics, null, predicate);
     }
 
     public StatisticType getStatisticType(AWSMetric metric) {
         return MetricsProcessorHelper.getStatisticType(metric.getIncludeMetric(), includeMetrics);
     }
 
-
     public List<com.appdynamics.extensions.metrics.Metric> createMetricStatsMapForUpload(NamespaceMetricStatistics namespaceMetricStats) {
         Map<String, String> dimensionToMetricPathNameDictionary = new HashMap<String, String>();
-        dimensionToMetricPathNameDictionary.put(DIMENSIONS, "Health Check Id");
-
+        for (Dimension dimension : dimensions) {
+            dimensionToMetricPathNameDictionary.put(dimension.getName(), dimension.getDisplayName());
+        }
         return MetricsProcessorHelper.createMetricStatsMapForUpload(namespaceMetricStats,
                 dimensionToMetricPathNameDictionary, false);
     }
-
 
     public String getNamespace() {
         return NAMESPACE;

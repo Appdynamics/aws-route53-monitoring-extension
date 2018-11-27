@@ -8,36 +8,29 @@
 
 package com.appdynamics.extensions.aws.route53;
 
-import static com.appdynamics.extensions.aws.Constants.METRIC_PATH_SEPARATOR;
-
 import com.appdynamics.extensions.aws.SingleNamespaceCloudwatchMonitor;
 import com.appdynamics.extensions.aws.collectors.NamespaceMetricStatisticsCollector;
+import com.appdynamics.extensions.aws.config.Configuration;
 import com.appdynamics.extensions.aws.metric.processors.MetricsProcessor;
-import com.appdynamics.extensions.aws.route53.config.Route53Configuration;
-import com.singularity.ee.agent.systemagent.api.exception.TaskExecutionException;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
+import static com.appdynamics.extensions.aws.Constants.METRIC_PATH_SEPARATOR;
+import static com.appdynamics.extensions.aws.route53.Constants.*;
 
 
-public class Route53Monitor extends SingleNamespaceCloudwatchMonitor<Route53Configuration> {
+public class Route53Monitor extends SingleNamespaceCloudwatchMonitor<Configuration> {
 
     private static final Logger LOGGER = Logger.getLogger(Route53Monitor.class);
 
-    private static final String DEFAULT_METRIC_PREFIX = String.format("%s%s%s%s",
-            "Custom Metrics", METRIC_PATH_SEPARATOR, "Amazon Route53", METRIC_PATH_SEPARATOR);
+    private static final String DEFAULT_METRIC_PREFIX = String.format("%s%s%s%s", CUSTOM_METRICS, METRIC_PATH_SEPARATOR, AMAZON_SERVICE, METRIC_PATH_SEPARATOR);
 
     public Route53Monitor() {
-        super(Route53Configuration.class);
+        super(Configuration.class);
+        LOGGER.info(String.format("Using AWS Route53 Monitor Version [%s]",
+                this.getClass().getPackage().getImplementationTitle()));
     }
 
     @Override
@@ -47,22 +40,22 @@ public class Route53Monitor extends SingleNamespaceCloudwatchMonitor<Route53Conf
 
     @Override
     public String getMonitorName() {
-        return "Route53Monitor";
+        return MONITOR_NAME;
     }
 
     @Override
-    protected int getTaskCount() {
-        return 3;
+    protected List<Map<String, ?>> getServers() {
+        return (List<Map<String, ?>>) getContextConfiguration().getConfigYml().get("accounts");
     }
 
     @Override
-    protected void initialize(Route53Configuration config) {
+    protected void initialize(Configuration config) {
         super.initialize(config);
     }
 
     @Override
     protected NamespaceMetricStatisticsCollector getNamespaceMetricsCollector(
-            Route53Configuration config) {
+            Configuration config) {
         MetricsProcessor metricsProcessor = createMetricsProcessor(config);
 
         return new NamespaceMetricStatisticsCollector
@@ -70,7 +63,9 @@ public class Route53Monitor extends SingleNamespaceCloudwatchMonitor<Route53Conf
                 config.getConcurrencyConfig(),
                 config.getMetricsConfig(),
                 metricsProcessor,
-                config.getMetricPrefix())
+                config.getMetricPrefix(),
+                config.getCustomDashboard(),
+                config.getControllerInfo())
                 .withCredentialsDecryptionConfig(config.getCredentialsDecryptionConfig())
                 .withProxyConfig(config.getProxyConfig())
                 .build();
@@ -81,43 +76,10 @@ public class Route53Monitor extends SingleNamespaceCloudwatchMonitor<Route53Conf
         return LOGGER;
     }
 
-    private MetricsProcessor createMetricsProcessor(Route53Configuration config) {
+    private MetricsProcessor createMetricsProcessor(Configuration config) {
         return new Route53MetricsProcessor(
-                config.getMetricsConfig().getIncludeMetrics(), config.getIncludeDBIdentifiers());
-    }
-
-    public static void main(String[] args) throws TaskExecutionException, IOException {
-
-        ConsoleAppender ca = new ConsoleAppender();
-        ca.setWriter(new OutputStreamWriter(System.out));
-        ca.setLayout(new PatternLayout("%-5p [%t]: %m%n"));
-        ca.setThreshold(Level.DEBUG);
-        LOGGER.getRootLogger().addAppender(ca);
-
-
-      /*FileAppender fa = new FileAppender(new PatternLayout("%-5p [%t]: %m%n"), "cache.log");
-      fa.setThreshold(Level.DEBUG);
-      LOGGER.getRootLogger().addAppender(fa);*/
-
-
-        final Route53Monitor monitor = new Route53Monitor();
-
-        final Map<String, String> taskArgs = new HashMap<String, String>();
-        taskArgs.put("config-file", "/Users/venkata.konala/AppDynamics/Repos/Extensions/aws-api-gateway-monitoring-extension/src/main/resources/conf/config.yml");
-
-        //monitor.execute(taskArgs, null);
-
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                try {
-                    monitor.execute(taskArgs, null);
-                } catch (Exception e) {
-                    LOGGER.error("Error while running the task", e);
-                }
-            }
-        }, 2, 60, TimeUnit.SECONDS);
-
+                config.getMetricsConfig().getIncludeMetrics(),
+                config.getDimensions());
     }
 
 

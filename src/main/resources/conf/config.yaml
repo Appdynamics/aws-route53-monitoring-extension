@@ -3,7 +3,9 @@
 #metricPrefix: "Custom Metrics|Amazon Route53|"
 
 #This will create it in specific Tier aka Component. Replace <COMPONENT_ID>. Please make sure to have a trailing |.
-#To find out the COMPONENT_ID, please see the screen shot here https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java
+#To find out the COMPONENT_ID, please see the screen shot here https://docs.appdynamics.com/display/PRO42/Build+a+Monitoring+Extension+Using+Java
+
+# Metric list can be found here : https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/metrics_dimensions.html
 metricPrefix: "Server|Component:<TIER_ID>|Custom Metrics|Amazon Route53|"
 
 accounts:
@@ -25,33 +27,15 @@ proxyConfig:
     host:
     port:
     username:
-    password:
+    accountAccessKey:
 
-##Filters metrics based on Health Check IDs provided. Accepts regex patterns
-includeHealthCheckID: ["blog-*", "saas"]
+# Classic (namespace : "AWS/Route53")
+# Dimensions : HealthCheckId
 
-concurrencyConfig:
-  noOfAccountThreads: 3
-  noOfRegionThreadsPerAccount: 3
-  noOfMetricThreadsPerRegion: 3
-  #Thread timeout in seconds
-  threadTimeOut: 30
-
-#Allowed values are Basic and Detailed. Refer https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html for more information
-# Basic will fire CloudWatch API calls every 5 minutes
-# Detailed will fire CloudWatch API calls every 1 minutes
-cloudWatchMonitoring: "Basic"
-
-regionEndPoints:
-  ap-southeast-1: monitoring.ap-southeast-1.amazonaws.com
-  ap-southeast-2: monitoring.ap-southeast-2.amazonaws.com
-  ap-northeast-1: monitoring.ap-northeast-1.amazonaws.com
-  eu-central-1: monitoring.eu-central-1.amazonaws.com
-  eu-west-1: monitoring.eu-west-1.amazonaws.com
-  us-east-1: monitoring.us-east-1.amazonaws.com
-  us-west-1: monitoring.us-west-1.amazonaws.com
-  us-west-2: monitoring.us-west-2.amazonaws.com
-  sa-east-1: monitoring.sa-east-1.amazonaws.com
+dimensions:
+   - name: "HealthCheckId"
+     displayName: "Health Check Name"
+     values: []
 
 # Global metrics config for all accounts
 metricsConfig:
@@ -90,7 +74,7 @@ metricsConfig:
          multiplier: 1
        - name: "HealthCheckStatus"
          alias: "Health Check Status"
-         statType: "ave"
+         statType: "min"
          aggregationType: "OBSERVATION"
          timeRollUpType: "CURRENT"
          clusterRollUpType: "COLLECTIVE"
@@ -125,3 +109,60 @@ metricsConfig:
     # (ex: 5xx error responses from a service) or throttling errors
     #
     maxErrorRetrySize: 0
+
+
+concurrencyConfig:
+  noOfAccountThreads: 3
+  noOfRegionThreadsPerAccount: 3
+  noOfMetricThreadsPerRegion: 3
+  #Thread timeout in seconds
+  threadTimeOut: 30
+
+#Allowed values are Basic and Detailed. Refer https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html for more information
+# Basic will fire CloudWatch API calls every 5 minutes
+# Detailed will fire CloudWatch API calls every 1 minutes
+cloudWatchMonitoring: "Basic"
+
+# Generate a custom dashboard based on the provided template
+customDashboard:
+    enabled: true
+    dashboardName: "AWS Route53 Monitor Dashboard"
+
+    # Update the path to the dashboard file.
+    pathToSIMDashboard: "monitors/AWSRoute53Monitor/simDashboard.json"
+    pathToNormalDashboard: "monitors/AWSRoute53Monitor/normalDashboard.json"
+    periodicDashboardCheckInSeconds: 300
+
+# To upload the dashboard, please create a user from Controller UI or
+# add the credentials of an existing user.
+
+controllerInfo:
+    host: ""
+    port:
+    account: ""
+    username: ""
+    password: ""
+    # OPTIONAL Items
+    encryptedPassword: ""
+    encryptionKey: ""
+
+regionEndPoints:
+  us-east-1 : monitoring.us-east-1.amazonaws.com
+  us-east-2 : monitoring.us-east-2.amazonaws.com
+  us-west-1 : monitoring.us-west-1.amazonaws.com
+  us-west-2 : monitoring.us-west-2.amazonaws.com
+  ap-northeast-1 : monitoring.ap-northeast-1.amazonaws.com
+  ap-northeast-2: monitoring.ap-northeast-2.amazonaws.com
+  ap-northeast-3 : monitoring.ap-northeast-3.amazonaws.com
+  ap-south-1 : monitoring.ap-south-1.amazonaws.com
+  ap-southeast-1 : monitoring.ap-southeast-1.amazonaws.com
+  ap-southeast-2 : monitoring.ap-southeast-2.amazonaws.com
+  ca-central-1 : monitoring.ca-central-1.amazonaws.com
+  cn-north-1 : monitoring.cn-north-1.amazonaws.com.cn
+  cn-northwest-1 : monitoring.cn-northwest-1.amazonaws.com.cn
+  eu-central-1 : monitoring.eu-central-1.amazonaws.com
+  eu-west-1 : monitoring.eu-west-1.amazonaws.com
+  eu-west-2 : monitoring.eu-west-2.amazonaws.com
+  eu-west-3 : monitoring.eu-west-3.amazonaws.com
+  sa-east-1 : monitoring.sa-east-1.amazonaws.com
+  us-gov-west-1 : monitoring.us-gov-west-1.amazonaws.com
