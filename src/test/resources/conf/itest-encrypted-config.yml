@@ -27,8 +27,13 @@ proxyConfig:
     username:
     password:
 
-##Filters metrics based on Health Check IDs provided. Accepts regex patterns
-includeHealthCheckID: ["blog-*", "saas"]
+# Classic (namespace : "AWS/Route53")
+# Dimensions : HealthCheckId
+
+dimensions:
+   - name: "HealthCheckId"
+     displayName: "Health Check Name"
+     values: []
 
 concurrencyConfig:
   noOfAccountThreads: 3
@@ -125,3 +130,27 @@ metricsConfig:
     # (ex: 5xx error responses from a service) or throttling errors
     #
     maxErrorRetrySize: 0
+
+
+# Generate a custom dashboard based on the provided template
+customDashboard:
+    enabled: true
+    dashboardName: "AWS Route53 Monitor Dashboard"
+
+    # Update the path to the dashboard file.
+    pathToSIMDashboard: "monitors/AWSRoute53Monitor/simDashboard.json"
+    pathToNormalDashboard: "monitors/AWSRoute53Monitor/normalDashboard.json"
+    periodicDashboardCheckInSeconds: 300
+
+# To upload the dashboard, please create a user from Controller UI or
+# add the credentials of an existing user.
+
+controllerInfo:
+    host: ""
+    port:
+    account: ""
+    username: ""
+    password: ""
+    # OPTIONAL Items
+    encryptedPassword: ""
+    encryptionKey: ""

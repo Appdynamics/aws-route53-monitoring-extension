@@ -34,7 +34,7 @@ proxyConfig:
 
 dimensions:
    - name: "HealthCheckId"
-     displayName: "Health Check Name"
+     displayName: "Health Check ID"
      values: []
 
 # Global metrics config for all accounts
