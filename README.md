@@ -29,8 +29,8 @@ Captures Route53 statistics from Amazon CloudWatch and displays them in the AppD
 | | enableDecryption | If set to "true", then all aws credentials provided (access key and secret key) will be decrypted - see AWS Credentials Encryption section |  |
 | | decryptionKey | The key used when encypting the credentials |  |
 | **proxyConfig** | ----- | ----- | ----- |
-| | host | The proxy host (must also specify port) |  |
-| | port | The proxy port (must also specify host) |  |
+| | controllerHost | The proxy controllerHost (must also specify controllerPort) |  |
+| | controllerPort | The proxy controllerPort (must also specify controllerHost) |  |
 | | username | The proxy username (optional)  |  |
 | | password | The proxy password (optional)  |  |
 | **metricsConfig** | ----- | ----- | ----- |
@@ -71,8 +71,8 @@ credentialsDecryptionConfig:
     decryptionKey:
 
 proxyConfig:
-    host:
-    port:
+    controllerHost:
+    controllerPort:
     username:
     accountAccessKey:    
 

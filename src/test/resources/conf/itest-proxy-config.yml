@@ -21,8 +21,8 @@ credentialsDecryptionConfig:
     encryptionKey:
 
 proxyConfig:
-    host: 54.72.204.154
-    port: 8081
+    controllerHost: 54.72.204.154
+    controllerPort: 8081
     username:
     password:
 
@@ -144,8 +144,8 @@ customDashboard:
 # add the credentials of an existing user.
 
 controllerInfo:
-    host: ""
-    port:
+    controllerHost: ""
+    controllerPort:
     account: ""
     username: ""
     password: ""
