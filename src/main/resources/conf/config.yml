@@ -36,7 +36,7 @@ dimensions:
 metricsConfig:
   # Global time range configuration, applicable to all the metrics configured below.
   metricsTimeRange:
-    startTimeInMinsBeforeNow: 10
+    startTimeInMinsBeforeNow: 5
     endTimeInMinsBeforeNow: 0
   # Rate limit ( per second ) for GetMetricStatistics, default value is 400. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html
   getMetricStatisticsRateLimit: 400
@@ -53,53 +53,53 @@ metricsConfig:
   #       startTimeInMinsBeforeNow: 15
   #       endTimeInMinsBeforeNow: 0
   includeMetrics:
-    - name: "4XXError"
-      alias: "4XXError"
-      statType: "ave"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
-      metricsTimeRange:
-        startTimeInMinsBeforeNow: 10
-        endTimeInMinsBeforeNow: 0
-    - name: "5XXError"
-      alias: "5XXError"
-      statType: "ave"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
-    - name: "CacheHitCount"
-      alias: "CacheHitCount"
-      statType: "ave"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
-    - name: "CacheMissCount"
-      alias: "CacheMissCount"
-      statType: "ave"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
-    - name: "Count"
-      alias: "API count"
+    - name: "DNSQueries"
+      alias: "DNSQueries"
       statType: "sum"
       delta: false
       multiplier: 1
       timeRollUpType: "AVERAGE"
       clusterRollUpType: "INDIVIDUAL"
-    - name: "IntegrationLatency"
-      alias: "Integration Latency"
+      metricsTimeRange:
+        startTimeInMinsBeforeNow: 5
+        endTimeInMinsBeforeNow: 0
+    - name: "ChildHealthCheckHealthyCount"
+      alias: "ChildHealthCheckHealthyCount"
       statType: "ave"
       delta: false
       multiplier: 1
       timeRollUpType: "AVERAGE"
       clusterRollUpType: "INDIVIDUAL"
-    - name: "Latency"
-      alias: "Latency"
+    - name: "ConnectionTime"
+      alias: "ConnectionTime"
+      statType: "ave"
+      delta: false
+      multiplier: 1
+      timeRollUpType: "AVERAGE"
+      clusterRollUpType: "INDIVIDUAL"
+    - name: "HealthCheckPercentageHealthy"
+      alias: "HealthCheckPercentageHealthy"
+      statType: "ave"
+      delta: false
+      multiplier: 1
+      timeRollUpType: "AVERAGE"
+      clusterRollUpType: "INDIVIDUAL"
+    - name: "HealthCheckStatus"
+      alias: "HealthCheckStatus"
+      statType: "min"
+      delta: false
+      multiplier: 1
+      timeRollUpType: "AVERAGE"
+      clusterRollUpType: "INDIVIDUAL"
+    - name: "SSLHandshakeTime"
+      alias: "SSLHandshakeTime"
+      statType: "ave"
+      delta: false
+      multiplier: 1
+      timeRollUpType: "AVERAGE"
+      clusterRollUpType: "INDIVIDUAL"
+    - name: "TimeToFirstByte"
+      alias: "TimeToFirstByte"
       statType: "ave"
       delta: false
       multiplier: 1
