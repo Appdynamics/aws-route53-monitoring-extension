@@ -1,67 +1,79 @@
 /*
- * Copyright 2018. AppDynamics LLC and its affiliates.
- * All Rights Reserved.
- * This is unpublished proprietary source code of AppDynamics LLC and its affiliates.
- * The copyright notice above does not evidence any actual or intended publication of such source code.
+ * Copyright (c) 2018 AppDynamics,Inc.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.appdynamics.extensions.aws.route53;
 
-import static com.appdynamics.extensions.aws.Constants.METRIC_PATH_SEPARATOR;
-
 import com.appdynamics.extensions.aws.SingleNamespaceCloudwatchMonitor;
 import com.appdynamics.extensions.aws.collectors.NamespaceMetricStatisticsCollector;
-import com.appdynamics.extensions.aws.config.Configuration;
 import com.appdynamics.extensions.aws.metric.processors.MetricsProcessor;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import com.appdynamics.extensions.aws.route53.configuration.Route53Configuration;
+import com.appdynamics.extensions.aws.route53.processors.Route53MetricsProcessor;
+import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
+import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import java.util.List;
+import java.util.Map;
+
 
 /**
- * @author Satish Muddam
+ * Created by venkata.konala on 4/23/18.
  */
-public class Route53Monitor extends SingleNamespaceCloudwatchMonitor<Configuration> {
+public class Route53Monitor extends SingleNamespaceCloudwatchMonitor<Route53Configuration>{
 
-    private static final Logger LOGGER = Logger.getLogger("com.singularity.extensions.aws.Route53Monitor");
+    private static final Logger logger = ExtensionsLoggerFactory.getLogger(Route53Monitor.class);
 
-    private static final String DEFAULT_METRIC_PREFIX = String.format("%s%s%s%s",
-            "Custom Metrics", METRIC_PATH_SEPARATOR, "Amazon Route53", METRIC_PATH_SEPARATOR);
 
-    public Route53Monitor() {
-        super(Configuration.class);
-        LOGGER.info(String.format("Using AWS Route53 Monitor Version [%s]",
-                this.getClass().getPackage().getImplementationTitle()));
+    public Route53Monitor(){
+        super(Route53Configuration.class);
     }
 
     @Override
-    protected NamespaceMetricStatisticsCollector getNamespaceMetricsCollector(
-            Configuration config) {
-        MetricsProcessor metricsProcessor = createMetricsProcessor(config);
+    protected NamespaceMetricStatisticsCollector getNamespaceMetricsCollector(Route53Configuration route53Configuration) {
 
-        return new NamespaceMetricStatisticsCollector
-                .Builder(config.getAccounts(),
-                config.getConcurrencyConfig(),
-                config.getMetricsConfig(),
-                metricsProcessor)
-                .withCredentialsEncryptionConfig(config.getCredentialsDecryptionConfig())
-                .withProxyConfig(config.getProxyConfig())
+        MetricsProcessor metricsProcessor = createMetricsProcessor(route53Configuration);
+        return new NamespaceMetricStatisticsCollector.Builder(route53Configuration.getAccounts(),
+                route53Configuration.getConcurrencyConfig(),
+                route53Configuration.getMetricsConfig(),
+                metricsProcessor,
+                route53Configuration.getMetricPrefix())
+                .withCredentialsDecryptionConfig(route53Configuration.getCredentialsDecryptionConfig())
+                .withProxyConfig(route53Configuration.getProxyConfig())
                 .build();
+    }
+
+    private MetricsProcessor createMetricsProcessor(Route53Configuration route53Configuration){
+        return new Route53MetricsProcessor(route53Configuration);
     }
 
     @Override
     protected Logger getLogger() {
-        return LOGGER;
+        return logger;
     }
 
     @Override
-    protected String getMetricPrefix(Configuration config) {
-        return StringUtils.isNotBlank(config.getMetricPrefix()) ?
-                config.getMetricPrefix() : DEFAULT_METRIC_PREFIX;
+    protected String getDefaultMetricPrefix() {
+        return "Custom Metrics|Amazon Route53";
     }
 
-    private MetricsProcessor createMetricsProcessor(Configuration config) {
-        return new Route53MetricsProcessor(
-                config.getMetricsConfig().getMetricTypes(),
-                config.getMetricsConfig().getExcludeMetrics());
+    @Override
+    public String getMonitorName() {
+        return "AWSRoute53Monitor";
+    }
+
+    @Override
+    protected List<Map<String, ?>> getServers() {
+        return Lists.newArrayList();
     }
 }
