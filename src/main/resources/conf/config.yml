@@ -26,9 +26,6 @@ accounts:
     regions: ["us-west-2"]
 
 dimensions:
-  - name: "HealthCheckId"
-    displayName: "HealthCheckId"
-    values: [".*"]
   - name: "HostedZoneId"
     displayName: "HostedZoneId"
     values: [".*"]
@@ -63,48 +60,6 @@ metricsConfig:
       metricsTimeRange:
         startTimeInMinsBeforeNow: 5
         endTimeInMinsBeforeNow: 0
-    - name: "ChildHealthCheckHealthyCount"
-      alias: "ChildHealthCheckHealthyCount"
-      statType: "ave"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
-    - name: "ConnectionTime"
-      alias: "ConnectionTime"
-      statType: "ave"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
-    - name: "HealthCheckPercentageHealthy"
-      alias: "HealthCheckPercentageHealthy"
-      statType: "ave"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
-    - name: "HealthCheckStatus"
-      alias: "HealthCheckStatus"
-      statType: "min"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
-    - name: "SSLHandshakeTime"
-      alias: "SSLHandshakeTime"
-      statType: "ave"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
-    - name: "TimeToFirstByte"
-      alias: "TimeToFirstByte"
-      statType: "ave"
-      delta: false
-      multiplier: 1
-      timeRollUpType: "AVERAGE"
-      clusterRollUpType: "INDIVIDUAL"
 
 regionEndPoints:
   ap-northeast-1: monitoring.ap-northeast-1.amazonaws.com
